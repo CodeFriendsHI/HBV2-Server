@@ -7,7 +7,6 @@ const app = express();
 const fs = require('fs');
 const util = require('util');
 
-var upload = multer({ dest: 'uploads/' })
 
 const hostname = '127.0.0.1';
 const port = '3000';
@@ -18,6 +17,17 @@ const readFileAsync = util.promisify(fs.readFile);
 const connectionString = process.env.DATABASE_URL || 'postgres://notandi:@localhost/images';
 
 const directory = './uploads';
+
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, './uploads')
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + '-' + Date.now())
+  }
+})
+const upload = multer({ storage: storage })
+
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
@@ -52,6 +62,7 @@ app.get('/', async (req, res, next) => {
 });
 
 app.post('/post', upload.single('avatar'), async (req, res, next) => {
+  req.file.filename = Date.now();
   console.log(req.file)
 
 });
