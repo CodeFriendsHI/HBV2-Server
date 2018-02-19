@@ -1,0 +1,11 @@
+extends layout
+
+block content
+  p hello
+  p= data
+  
+  each img in data
+    img(src="data:image/png;base64," + img)
+      
+    
+      
