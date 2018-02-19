@@ -8,9 +8,6 @@ const fs = require('fs');
 const util = require('util');
 
 
-const hostname = '127.0.0.1';
-const port = '3000';
-
 const readDirAsync = util.promisify(fs.readdir);
 const readFileAsync = util.promisify(fs.readFile);
 
@@ -66,6 +63,9 @@ app.post('/post', upload.single('avatar'), async (req, res, next) => {
   console.log(req.file)
 
 });
+
+const hostname = '127.0.0.1';
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.info(`Server running at http://${hostname}:${port}/`);
 });
