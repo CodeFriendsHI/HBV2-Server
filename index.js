@@ -64,7 +64,7 @@ app.get('/post', (req, res) => {
 });
 
 app.post('/post', upload.single('avatar'), async (req, res, next) => {
-  console.log(req.body)
+  console.log(req)
   req.file.filename = Date.now();
   //console.log(req.file)
 
