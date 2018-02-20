@@ -65,7 +65,7 @@ app.get('/post', (req, res) => {
   res.send('hello from post');
 });
 
-app.post('/post', async (req, res, next) => {
+app.post('/post', (req, res, next) => {
   console.log(req)
   req.file.filename = Date.now();
   //console.log(req.file)
