@@ -30,8 +30,8 @@ const upload = multer({ storage: storage })
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-app.use(bodyParser.raw({ type: 'image/jpeg' }))
-app.use(bodyParser.urlencoded({extended: false}));
+//app.use(bodyParser.raw({ type: 'image/jpeg' }))
+//app.use(bodyParser.urlencoded({extended: false}));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'uploads')));
