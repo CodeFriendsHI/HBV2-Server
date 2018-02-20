@@ -65,7 +65,7 @@ app.get('/post', (req, res) => {
   res.send('hello from post');
 });
 
-app.post('/post', upload.single('avatar'), async (req, res, next) => {
+app.post('/post', async (req, res, next) => {
   console.log(req)
   req.file.filename = Date.now();
   //console.log(req.file)
@@ -73,7 +73,7 @@ app.post('/post', upload.single('avatar'), async (req, res, next) => {
 });
 
 const hostname = '127.0.0.1';
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 3000;
 app.listen(port, () => {
   console.info(`Server running at http://${hostname}:${port}/`);
 });
