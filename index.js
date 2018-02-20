@@ -4,7 +4,6 @@ const multer  = require('multer')
 const { Client } = require('pg');
 
 const bodyParser = require('body-parser')
-const jsonParser = bodyParser.json();
 
 const app = express();
 const fs = require('fs');
@@ -32,7 +31,8 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 //app.use(bodyParser.raw({ type: 'image/jpeg' }))
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'uploads')));
 
@@ -65,7 +65,7 @@ app.get('/post', (req, res) => {
   res.send('hello from post');
 });
 
-app.post('/post', jsonParser, (req, res, next) => {
+app.post('/post', (req, res, next) => {
   console.log(req)
   req.file.filename = Date.now();
   //console.log(req.file)
