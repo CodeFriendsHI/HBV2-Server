@@ -49,7 +49,6 @@ async function read(dir) {
 app.get('/', async (req, res, next) => {
 
   await read(directory).then((data) => {
-    console.log(data)
     const encodedData = data.map((i) =>  i.toString('base64'));
     //res.send(encodedData) // sendFILE hér skal senda gögnin
 
