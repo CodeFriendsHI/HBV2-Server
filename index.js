@@ -51,8 +51,9 @@ app.get('/', async (req, res, next) => {
     const encodedData = data.map((i) =>  i.toString('base64'));
     //res.send(encodedData) // sendFILE hér skal senda gögnin
 
-    res.render('index', { data: encodedData } )
+    return res.render('index', { data: encodedData } )
   }).catch((err) => {
+    return res.send('oh no!')
   //  errorHandler(err, req, res);
   });
 
@@ -65,7 +66,7 @@ app.post('/post', upload.single('avatar'), async (req, res, next) => {
 });
 
 const hostname = '127.0.0.1';
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 app.listen(port, () => {
   console.info(`Server running at http://${hostname}:${port}/`);
 });
