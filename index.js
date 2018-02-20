@@ -4,6 +4,7 @@ const multer  = require('multer')
 const { Client } = require('pg');
 
 const bodyParser = require('body-parser')
+const jsonParser = bodyParser.json();
 
 const app = express();
 const fs = require('fs');
@@ -64,7 +65,7 @@ app.get('/post', (req, res) => {
   res.send('hello from post');
 });
 
-app.post('/post', (req, res, next) => {
+app.post('/post', jsonParser, (req, res, next) => {
   console.log(req)
   req.file.filename = Date.now();
   //console.log(req.file)
