@@ -7,6 +7,28 @@ const app = express();
 const fs = require('fs');
 const util = require('util');
 
+const streams = [
+  {
+    id: 0,
+    img: 'Skeletor.png',
+  },
+  {
+    id: 1,
+    img: 'dabbi.jpg',
+  },
+  {
+    id: 2,
+    img: 'simmi.jpg',
+  },
+  {
+    id: 3,
+    img: 'steingrimur.jpg',
+  },
+  {
+    id: 4,
+    img: 'kata.jpg',
+  },
+];
 
 const readDirAsync = util.promisify(fs.readdir);
 const readFileAsync = util.promisify(fs.readFile);
@@ -14,6 +36,7 @@ const readFileAsync = util.promisify(fs.readFile);
 const connectionString = process.env.DATABASE_URL || 'postgres://notandi:@localhost/images';
 
 const directory = './uploads';
+const public = path.join(__dirname, '/public/');
 
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -58,6 +81,35 @@ app.get('/', async (req, res, next) => {
   });
 
 });
+
+
+app.get('/:id', async (req, res, next) => {
+
+  const id = parseInt(req.params.id, 10);
+
+  const found = streams.find(s => s.id === id);
+
+  if (found) {
+    const options = {
+      root: public,
+      dotfiles: 'deny',
+      headers: {
+        'x-timestamp': Date.now(),
+        'x-sent': true,
+      }
+    }
+    res.sendFile(found.img, options, (err) => {
+      if (err) {
+        next(err);
+      } else {
+        console.log('Sent image: ', found.img);
+      }
+    });
+  } else {
+    res.send('Not found');
+  }
+});
+
 
 app.get('/post', (req, res) => {
   res.send('hello from post');
