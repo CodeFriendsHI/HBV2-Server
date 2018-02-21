@@ -3,8 +3,6 @@ const path = require('path');
 const multer  = require('multer')
 const { Client } = require('pg');
 
-const bodyParser = require('body-parser')
-
 const app = express();
 const fs = require('fs');
 const util = require('util');
@@ -30,9 +28,8 @@ const upload = multer({ storage: storage })
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-//app.use(bodyParser.raw({ type: 'image/jpeg' }))
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'uploads')));
 
@@ -50,6 +47,7 @@ async function read(dir) {
 app.get('/', async (req, res, next) => {
 
   await read(directory).then((data) => {
+    console.log(data)
     const encodedData = data.map((i) =>  i.toString('base64'));
     //res.send(encodedData) // sendFILE hér skal senda gögnin
 
@@ -65,15 +63,14 @@ app.get('/post', (req, res) => {
   res.send('hello from post');
 });
 
-app.post('/post', (req, res, next) => {
-  console.log(req)
-  req.file.filename = Date.now();
-  //console.log(req.file)
+app.post('/post', upload.single('avatar'), async (req, res, next) => {
+  //req.file.filename = Date.now();
+  console.log(req.file)
 
 });
 
 const hostname = '127.0.0.1';
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 3001;
 app.listen(port, () => {
   console.info(`Server running at http://${hostname}:${port}/`);
 });
