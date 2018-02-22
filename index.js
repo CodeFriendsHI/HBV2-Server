@@ -118,7 +118,7 @@ app.get('/post', (req, res) => {
   res.send('hello from post');
 });
 
-app.post('/post', upload.single('avatar') (req, res, next) => {
+app.post('/post', upload.single('avatar'), (req, res, next) => {
   //req.file.filename = Date.now();
   console.log(req)
 
