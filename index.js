@@ -6,7 +6,7 @@ const { Client } = require('pg');
 const app = express();
 const fs = require('fs');
 const util = require('util');
-
+const bodyParser = require('body-parser');
 
 const readDirAsync = util.promisify(fs.readdir);
 const readFileAsync = util.promisify(fs.readFile);
@@ -29,10 +29,29 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 
-app.use(express.urlencoded({ extended: true }));
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'uploads')));
 
+
+async function insertIntoDb(data) {
+  const values = Object.values(data);
+
+  const client = new Client({ connectionString });
+  const text = 'INSERT INTO images(image, roomId) VALUES($1, $2);';
+  await client.connect();
+  await client.query(text, values);
+  await client.end();
+}
+
+async function getData() {
+  const client = new Client({ connectionString });
+  await client.connect();
+  const data = await client.query('SELECT * FROM images;');
+  await client.end();
+  return data.rows;
+}
 
 async function read(dir) {
   const images = await readDirAsync(dir);
@@ -63,12 +82,25 @@ app.get('/post', (req, res) => {
   res.send('hello from post');
 });
 
-app.post('/post', (req, res, next) => {
-  //req.file.filename = Date.now();
-  res.send(`
-      <img src="data:image/png;base64,${app.locals.currentImage}" />
-    `);
+app.post('/post', async (req, res, next) => {
+  console.log("posted image")
+  //app.locals.currentImage = req.body.avatar;
+  const {
+    image = '',
+    roomId = 1,
+  } = req.body;
+  await insertIntoDb({image, roomId});
+  return res.status(201).json(roomId);
 
+
+});
+
+app.get('/rooms/:roomId' , async (req, res, next) => {
+  const data = await getData();
+  const roomId = data.roomId;
+  //console.log('APP.LOCALS.CURRENTIMAGE', app.locals.currentImage)
+
+  res.render('images', { data }  );
 });
 
 const hostname = '127.0.0.1';

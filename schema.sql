@@ -2,6 +2,6 @@ CREATE TABLE images
   (
     id SERIAL PRIMARY KEY,
     date timestamp with time zone not null default current_timestamp,
-    image VARBINARY(max) NOT NULL,
+    image bytea NOT NULL,
     roomId INT
   );
