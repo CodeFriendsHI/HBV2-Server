@@ -65,7 +65,9 @@ app.get('/post', (req, res) => {
 
 app.post('/post', (req, res, next) => {
   //req.file.filename = Date.now();
-  console.log(req)
+  res.send(`
+      <img src="data:image/png;base64,${app.locals.currentImage}" />
+    `);
 
 });
 
