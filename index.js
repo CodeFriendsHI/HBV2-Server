@@ -115,12 +115,16 @@ app.get('/:id', async (req, res, next) => {
 
 
 app.get('/post', (req, res) => {
-  res.send('hello from post');
+  res.send(`
+      <img src="data:image/png;base64,${app.locals.currentImage}" />
+    `);
 });
 
-app.post('/post', upload.single('avatar'), (req, res, next) => {
+app.post('/post', (req, res, next) => {
   //req.file.filename = Date.now();
   console.log(req)
+  app.locals.currentImage = req;
+
 
 });
 
