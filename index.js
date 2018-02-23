@@ -8,7 +8,6 @@ const bodyParser = require('body-parser');
 const app = express();
 const fs = require('fs');
 const util = require('util');
-const bodyParser = require('body-parser');
 
 const streams = [
   {
