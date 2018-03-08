@@ -9,7 +9,7 @@ const app = express();
 const fs = require('fs');
 const util = require('util');
 
-const streams = [
+const dummystreams = [
   {
     id: 0,
     img: 'Skeletor.png',
@@ -36,6 +36,13 @@ const readDirAsync = util.promisify(fs.readdir);
 const readFileAsync = util.promisify(fs.readFile);
 
 const connectionString = process.env.DATABASE_URL || 'postgres://notandi:@localhost/images';
+// {
+//   user: 'postgres',
+//   host: 'localhost',
+//   database: 'hbvtest',
+//   password: 'keytothecity',
+//   port: '5432',  
+// };
 
 const directory = './uploads';
 const public = path.join(__dirname, '/public/');
@@ -87,6 +94,16 @@ async function read(dir) {
   return Promise.all(promises).then(data => data);
 }
 
+async function getNewest() {
+  const client = new Client({ connectionString });
+  await client.connect();
+  const data = await client.query('SELECT image FROM images WHERE id = (SELECT max(id) FROM images)');
+  await client.end();
+  const { rows } = data;
+  console.info(rows);
+  return rows;
+}
+
 
 app.get('/', async (req, res, next) => {
 
@@ -108,7 +125,7 @@ app.get('/:id', async (req, res, next) => {
 
   const id = parseInt(req.params.id, 10);
 
-  const found = streams.find(s => s.id === id);
+  const found = dummystreams.find(s => s.id === id);
 
   if (found) {
     const options = {
@@ -158,6 +175,14 @@ app.get('/rooms/:roomId' , async (req, res, next) => {
 
 
   res.render('images', { data }  );
+});
+
+app.get('/streams/:id', async (req, res) => {
+  const { id } = req.params;
+  const data = await getNewest();
+  const { image } = data;  
+
+  return res.send(image);
 });
 
 const hostname = '127.0.0.1';

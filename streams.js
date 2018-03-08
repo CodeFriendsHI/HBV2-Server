@@ -1,33 +1,18 @@
-import { resolve } from "path";
+const express = require('express');
 
-const streams = [
-  {
-    id: 0,
-    img: 'Skeletor.png',
-  },
-  {
-    id: 1,
-    img: 'dabbi.jpg',
-  },
-  {
-    id: 2,
-    img: 'simmi.jpg',
-  },
-  {
-    id: 3,
-    img: 'steingrimur.jpg',
-  },
-  {
-    id: 4,
-    img: 'kata.jpg',
-  },
-];
+const router = express.Router();
 
-exports.findById = id => new Promise((resolve) => {
-  const found = streams.find(s => s.id === id);
-  if (found) {
-    return resolve(found);
-  }
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
-  return resolve(null);
+
+router.get('/', (req, res) => {
+  res.send('streams /');
 });
+
+router.get('/:id', (req, res) => {
+  const { id } = req.params;
+
+});
+
+
+module.exports = router;
