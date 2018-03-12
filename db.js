@@ -26,7 +26,7 @@ async function getNewest() {
   const data = await client.query('SELECT image FROM images WHERE id = (SELECT max(id) FROM images)');
   await client.end();
   const { rows } = data;
-  console.info(rows);
+  console.info('Get newest', rows);
   return rows;
 }
 
