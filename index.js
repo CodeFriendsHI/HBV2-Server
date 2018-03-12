@@ -134,7 +134,7 @@ app.get('/streams/:id', async (req, res) => {
   const data = await getNewest();
   const { image } = data[0];
 
-  const buffer = Buffer.from(image, 'base64');
+  const buffer = new Buffer(image, 'base64'); //eslint-disable-line
 
   console.info('Image', image);
   console.info('Image buffer', buffer);
