@@ -135,9 +135,17 @@ app.get('/streams/:id', async (req, res) => {
   const { image } = data;
 
   console.info(data);
-  console.info(image.image);
+  console.info(image);
 
-  return res.send(image.image);
+  const options = {
+    root: `data:image/png;base64,${image}`,
+    headers: {
+      'x-timestamp': Date.now(),
+      'x-sent': true,
+    },
+  };
+
+  return res.sendFile(options, id);
 });
 
 const hostname = '127.0.0.1';
