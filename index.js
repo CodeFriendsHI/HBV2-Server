@@ -134,18 +134,12 @@ app.get('/streams/:id', async (req, res) => {
   const data = await getNewest();
   const { image } = data;
 
-  console.info(data);
-  console.info(image);
+  console.info('Image info', `data:image/png;base64,${image}`);
 
-  const options = {
-    root: `data:image/png;base64,${image}`,
-    headers: {
-      'x-timestamp': Date.now(),
-      'x-sent': true,
-    },
-  };
+  res.set('Content-type', 'image/png');
+  const buffer = `data:image/png;base64,${image}`;
 
-  return res.sendFile(options, id);
+  return res.send(buffer);
 });
 
 const hostname = '127.0.0.1';
