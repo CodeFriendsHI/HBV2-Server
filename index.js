@@ -1,9 +1,13 @@
 const express = require('express');
 const path = require('path');
-const multer  = require('multer')
-const { Client } = require('pg');
 const bodyParser = require('body-parser');
 
+const {
+  insertIntoDb,
+  getData,
+  getNewest,
+  cleanOld,
+} = require('./db');
 
 const app = express();
 const fs = require('fs');
@@ -35,55 +39,18 @@ const dummystreams = [
 const readDirAsync = util.promisify(fs.readdir);
 const readFileAsync = util.promisify(fs.readFile);
 
-const connectionString = process.env.DATABASE_URL || 'postgres://notandi:@localhost/images';
-// {
-//   user: 'postgres',
-//   host: 'localhost',
-//   database: 'hbvtest',
-//   password: 'keytothecity',
-//   port: '5432',  
-// };
-
 const directory = './uploads';
-const public = path.join(__dirname, '/public/');
-
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, './uploads')
-    },
-    filename: function (req, file, cb) {
-        cb(null, file.fieldname + '-' + Date.now())
-  }
-})
-const upload = multer({ storage: storage })
+const publicRoute = path.join(__dirname, '/public/');
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 
-app.use(bodyParser.json({limit: '50mb'}));
-app.use(bodyParser.urlencoded({limit: '50mb', extended: true}));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'uploads')));
 
-
-async function insertIntoDb(data) {
-  const values = Object.values(data);
-
-  const client = new Client({ connectionString });
-  const text = 'INSERT INTO images(image, roomId) VALUES($1, $2);';
-  await client.connect();
-  await client.query(text, values);
-  await client.end();
-}
-
-async function getData() {
-  const client = new Client({ connectionString });
-  await client.connect();
-  const data = await client.query('SELECT * FROM images;');
-  await client.end();
-  return data.rows;
-}
 
 async function read(dir) {
   const images = await readDirAsync(dir);
@@ -94,58 +61,18 @@ async function read(dir) {
   return Promise.all(promises).then(data => data);
 }
 
-async function getNewest() {
-  const client = new Client({ connectionString });
-  await client.connect();
-  const data = await client.query('SELECT image FROM images WHERE id = (SELECT max(id) FROM images)');
-  await client.end();
-  const { rows } = data;
-  console.info(rows);
-  return rows;
-}
 
-
-app.get('/', async (req, res, next) => {
-
+app.get('/', async (req, res, next) => { // eslint-disable-line
   await read(directory).then((data) => {
-    console.log(data)
-    const encodedData = data.map((i) =>  i.toString('base64'));
-    //res.send(encodedData) // sendFILE hér skal senda gögnin
+    console.info(data);
+    const encodedData = data.map(i => i.toString('base64'));
+    // res.send(encodedData) // sendFILE hér skal senda gögnin
 
-    return res.render('index', { data: encodedData } )
-  }).catch((err) => {
-    return res.send('oh no!')
-  //  errorHandler(err, req, res);
+    return res.render('index', { data: encodedData });
+  }).catch((err) => { // eslint-disable-line
+    return res.send('oh no!');
+    //  errorHandler(err, req, res);
   });
-
-});
-
-
-app.get('/:id', async (req, res, next) => {
-
-  const id = parseInt(req.params.id, 10);
-
-  const found = dummystreams.find(s => s.id === id);
-
-  if (found) {
-    const options = {
-      root: public,
-      dotfiles: 'deny',
-      headers: {
-        'x-timestamp': Date.now(),
-        'x-sent': true,
-      }
-    }
-    res.sendFile(found.img, options, (err) => {
-      if (err) {
-        next(err);
-      } else {
-        console.log('Sent image: ', found.img);
-      }
-    });
-  } else {
-    res.send('Not found');
-  }
 });
 
 
@@ -155,32 +82,57 @@ app.get('/post', (req, res) => {
     `);
 });
 
-app.post('/post', async (req, res, next) => {
-  console.log("posted image")
-  //app.locals.currentImage = req.body.avatar;
+
+app.get('/:id', async (req, res, next) => {
+  const id = parseInt(req.params.id, 10);
+
+  const found = dummystreams.find(s => s.id === id);
+
+  if (found) {
+    const options = {
+      root: publicRoute,
+      dotfiles: 'deny',
+      headers: {
+        'x-timestamp': Date.now(),
+        'x-sent': true,
+      },
+    };
+    res.sendFile(found.img, options, (err) => {
+      if (err) {
+        next(err);
+      } else {
+        console.info('Sent image: ', found.img);
+      }
+    });
+  } else {
+    res.send('Not found');
+  }
+});
+
+
+app.post('/post', async (req, res, next) => { // eslint-disable-line
+  console.info('posted image');
+  // app.locals.currentImage = req.body.avatar;
   const {
     image = '',
     roomId = 1,
   } = req.body;
-  await insertIntoDb({image, roomId});
+  await insertIntoDb({ image, roomId });
   return res.status(201).json(roomId);
-
-
 });
 
-app.get('/rooms/:roomId' , async (req, res, next) => {
+app.get('/rooms/:roomId' , async (req, res, next) => { // eslint-disable-line
   const data = await getData();
-  const roomId = data.roomId;
-  //console.log('APP.LOCALS.CURRENTIMAGE', app.locals.currentImage)
+  const { roomId } = data;
+  // console.log('APP.LOCALS.CURRENTIMAGE', app.locals.currentImage)
 
-
-  res.render('images', { data }  );
+  res.render('images', { data });
 });
 
 app.get('/streams/:id', async (req, res) => {
   const { id } = req.params;
   const data = await getNewest();
-  const { image } = data;  
+  const { image } = data;
 
   return res.send(image);
 });
