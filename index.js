@@ -134,6 +134,9 @@ app.get('/streams/:id', async (req, res) => {
   const data = await getNewest();
   const { image } = data;
 
+  console.info(data);
+  console.info(image);
+
   return res.send(image);
 });
 
