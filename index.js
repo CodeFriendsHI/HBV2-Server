@@ -135,9 +135,9 @@ app.get('/streams/:id', async (req, res) => {
   const { image } = data;
 
   console.info(data);
-  console.info(image);
+  console.info(image.image);
 
-  return res.send(image);
+  return res.send(image.image);
 });
 
 const hostname = '127.0.0.1';
