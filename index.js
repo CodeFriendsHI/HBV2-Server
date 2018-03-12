@@ -126,23 +126,20 @@ app.get('/rooms/:roomId' , async (req, res, next) => { // eslint-disable-line
   const { roomId } = data;
   // console.log('APP.LOCALS.CURRENTIMAGE', app.locals.currentImage)
 
-  console.info('Data', data);
-
   res.render('images', { data });
 });
 
 app.get('/streams/:id', async (req, res) => {
   const { id } = req.params;
   const data = await getNewest();
-  const { image } = data;
+  const { image } = data[0];
 
-  console.info('Data', data);
+  const buffer = Buffer.from(image, 'base64');
 
-  console.info('Image buffer', image);
-  console.info('Image info', `data:image/png;base64,${image}`);
+  console.info('Image', image);
+  console.info('Image buffer', buffer);
 
   res.set('Content-type', 'image/png');
-  const buffer = `data:image/png;base64,${image}`;
 
   return res.send(buffer);
 });
