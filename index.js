@@ -134,14 +134,13 @@ app.get('/streams/:id', async (req, res) => {
   const data = await getNewest();
   const { image } = data[0];
 
-  const buffer = new Buffer(image, 'base64'); //eslint-disable-line
+  const buffer = Buffer.isEncoding('base64');
 
-  console.info('Image', image);
-  console.info('Image buffer', buffer);
+  console.info('Image buffer - isEncoding', buffer);
 
   res.set('Content-type', 'image/png');
 
-  return res.send(buffer);
+  return res.send(image);
 });
 
 const hostname = '127.0.0.1';
