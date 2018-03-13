@@ -11,7 +11,9 @@
     "pug": "^2.0.0-rc.4"
   },
   "devDependencies": {
-    "eslint": "^4.18.0"
+    "eslint": "^4.18.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.9.0"
   },
   "scripts": {
     "eslint": "eslint *.js **/*.js",
