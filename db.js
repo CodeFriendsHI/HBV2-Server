@@ -29,7 +29,7 @@ async function getNewest() {
   );
   await client.end();
   const { rows } = data;
-  console.info(rows);
+  //console.info(rows);
   return rows;
 }
 

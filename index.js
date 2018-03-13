@@ -125,10 +125,13 @@ app.get("/streams/:id", async (req, res) => {
   const { id } = req.params;
   const data = await getNewest();
   const { image } = data[0];
-  console.log("MYND", image);
-  return res.send(`
-      <img src=data:image/png;base64,${image.toString("base64")}>
-    `);
+  //console.log("MYND", image);
+  res.send(image);
+  //res.render("oneimage", { image });
+
+  // return res.send(`
+  //     <img src=data:image/png;base64,${bufferimg}>
+  //   `);
 });
 
 const hostname = "127.0.0.1";
