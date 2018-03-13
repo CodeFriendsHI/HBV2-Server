@@ -126,8 +126,8 @@ app.get("/streams/:id", async (req, res) => {
   const data = await getNewest();
   const { image } = data[0];
   //console.log("MYND", image);
-  res.send(image);
-  //res.render("oneimage", { image });
+  //res.send(image);
+  res.render("oneimage", { image });
 
   // return res.send(`
   //     <img src=data:image/png;base64,${bufferimg}>
