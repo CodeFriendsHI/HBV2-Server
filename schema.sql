@@ -5,3 +5,11 @@ CREATE TABLE images
     image bytea NOT NULL,
     roomId INT
   );
+
+CREATE TABLE rooms
+  (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(64),
+    stream VARCHAR(256),
+    token VARCHAR(256)
+  );

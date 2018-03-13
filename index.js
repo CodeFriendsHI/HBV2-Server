@@ -7,6 +7,7 @@ const {
   getData,
   getNewest,
   cleanOld,
+  getRooms,
 } = require('./db');
 
 const app = express();
@@ -82,6 +83,13 @@ app.get('/post', (req, res) => {
     `);
 });
 
+app.get('/rooms', async (req, res) => {
+
+  const data = await getRooms();
+  console.info(data);
+
+  return res.json(data);
+});
 
 app.get('/:id', async (req, res, next) => {
   const id = parseInt(req.params.id, 10);
@@ -121,7 +129,7 @@ app.post('/post', async (req, res, next) => { // eslint-disable-line
   return res.status(201).json(roomId);
 });
 
-app.get('/rooms/:roomId' , async (req, res, next) => { // eslint-disable-line
+app.get('/rooms/:roomId' , async (req, res, next) => { // eslint-disable-line  
   const data = await getData();
   const { roomId } = data;
   // console.log('APP.LOCALS.CURRENTIMAGE', app.locals.currentImage)
@@ -131,7 +139,7 @@ app.get('/rooms/:roomId' , async (req, res, next) => { // eslint-disable-line
 
 app.get('/streams/:id', async (req, res) => {
   const { id } = req.params;
-  const data = await getNewest();
+  const data = await getNewest(id);
   const { image } = data[0];
 
   const buffer = Buffer.isEncoding('base64');
