@@ -18,39 +18,10 @@ cloud.config({
   api_secret: process.env.CLOUDINARY_APISECRET,
 });
 
-const dummystreams = [
-  {
-    id: 0,
-    img: 'Skeletor.png',
-  },
-  {
-    id: 1,
-    img: 'dabbi.jpg',
-  },
-  {
-    id: 2,
-    img: 'simmi.jpg',
-  },
-  {
-    id: 3,
-    img: 'steingrimur.jpg',
-  },
-  {
-    id: 4,
-    img: 'kata.jpg',
-  },
-  {
-    id: 5,
-    img: 'image.png',
-  },
-];
-
 const readDirAsync = util.promisify(fs.readdir);
 const readFileAsync = util.promisify(fs.readFile);
-const writeFileAsync = util.promisify(fs.writeFile);
 
 const directory = './uploads';
-const publicRoute = path.join(__dirname, '/public/');
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
@@ -95,7 +66,7 @@ app.get('/post', (req, res) => {
 app.post('/rooms', (req, res) => {
   const { name = '', stream = '', token = '' } = req.body;
   createRoom([name, stream, token]);
-  res.status(204);
+  res.status(204).json();
 });
 
 app.get('/rooms', async (req, res) => {
@@ -103,32 +74,6 @@ app.get('/rooms', async (req, res) => {
   console.info(data);
 
   return res.json(data);
-});
-
-app.get('/:id', async (req, res, next) => {
-  const id = parseInt(req.params.id, 10);
-
-  const found = dummystreams.find(s => s.id === id);
-
-  if (found) {
-    const options = {
-      root: publicRoute,
-      dotfiles: 'deny',
-      headers: {
-        'x-timestamp': Date.now(),
-        'x-sent': true,
-      },
-    };
-    res.sendFile(found.img, options, (err) => {
-      if (err) {
-        next(err);
-      } else {
-        console.info('Sent image: ', found.img);
-      }
-    });
-  } else {
-    res.send('Not found');
-  }
 });
 
 app.post('/post', async (req, res, next) => {
