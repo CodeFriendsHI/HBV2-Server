@@ -31,7 +31,8 @@ async function getData() {
 
 async function getNewest(id) {
   const client = new Client({ connectionString });
-  const queryString = 'SELECT image FROM images WHERE id = (SELECT max(id) FROM images) AND WHERE roomId = $1';
+  // const queryString = 'SELECT image FROM images WHERE id = (SELECT max(id) FROM images) AND WHERE roomId = $1';
+  const queryString = 'SELECT image FROM images WHERE id = (SELECT max(id) FROM images)';  
   const values = [id];
   await client.connect();
   const data = await client.query(queryString, values);
