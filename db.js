@@ -71,4 +71,5 @@ module.exports = {
   getNewest,
   cleanOld,
   getRooms,
+  createRoom,
 };
