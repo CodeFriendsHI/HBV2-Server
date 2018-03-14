@@ -1,7 +1,15 @@
 const { Client } = require("pg");
 
 const connectionString =
-  process.env.DATABASE_URL || "postgres://notandi:@localhost/images";
+  process.env.DATABASE_URL ||
+  {
+    user: 'postgres',
+    host: 'localhost',
+    database: 'hbvtest',
+    password: 'keytothecity',
+    port: '5432',
+  } || // geir
+  'postgres://notandi:@localhost/images'; // fannar
 
 async function insertIntoDb(data) {
   const values = Object.values(data);
@@ -21,12 +29,12 @@ async function getData() {
   return data.rows;
 }
 
-async function getNewest() {
+async function getNewest(id) {
   const client = new Client({ connectionString });
+  const queryString = 'SELECT image FROM images WHERE id = (SELECT max(id) FROM images) AND WHERE roomId = $1';
+  const values = [id];
   await client.connect();
-  const data = await client.query(
-    "SELECT image FROM images WHERE id = (SELECT max(id) FROM images)"
-  );
+  const data = await client.query(queryString, values);
   await client.end();
   const { rows } = data;
   //console.info(rows);
@@ -45,9 +53,21 @@ async function cleanOld() {
   return rows;
 }
 
+async function getRooms() {
+  const client = new Client(connectionString);
+  const queryString = 'SELECT * FROM rooms';
+  await client.connect();
+  const data = await client.query(queryString);
+  await client.end();
+  const { rows } = data;
+  return rows;
+}
+
+
 module.exports = {
   insertIntoDb,
   getData,
   getNewest,
-  cleanOld
+  cleanOld,
+  getRooms,
 };
