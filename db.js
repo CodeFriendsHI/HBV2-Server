@@ -60,7 +60,7 @@ async function createRoom(data) {
   const client = new Client(connectionString);
   const queryString = 'INSERT INTO rooms(name, stream, token) VALUES ($1, $2, $3)';
   await client.connect();
-  const result = await client.query(queryString);
+  const result = await client.query(queryString, data);
   await client.end();
   return result;
 }
