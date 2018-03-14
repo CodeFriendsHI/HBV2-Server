@@ -30,7 +30,7 @@ async function getNewest(id) {
   const data = await client.query(queryString);
   await client.end();
   const { rows } = data;
-  //console.info(rows);
+  // console.info(rows);
   return rows;
 }
 
@@ -56,6 +56,14 @@ async function getRooms() {
   return rows;
 }
 
+async function createRoom(data) {
+  const client = new Client(connectionString);
+  const queryString = 'INSERT INTO rooms(name, stream, token) VALUES ($1, $2, $3)';
+  await client.connect();
+  const result = await client.query(queryString);
+  await client.end();
+  return result;
+}
 
 module.exports = {
   insertIntoDb,
