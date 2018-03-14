@@ -83,10 +83,9 @@ app.get('/', async (req, res, next) => {
 
       return res.render('index', { data: encodedData });
     })
-    .catch(
-      err =>
-        // eslint-disable-line
-        res.send('oh no!')
+    .catch(err =>
+      // eslint-disable-line
+      res.send('oh no!'),
       //  errorHandler(err, req, res);
     );
 });
@@ -151,7 +150,7 @@ app.get('/rooms/:roomId' , async (req, res, next) => { // eslint-disable-line
 app.get('/streams/:id', async (req, res) => {
   const { id } = req.params;
   const data = await getNewest();
-  const image = data[0].image;
+  const { image } = data[0];
   const result = await cloud.uploader.upload(`data:image/gif;base64,${image}`);
 
   return res.send(result.url);
