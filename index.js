@@ -50,8 +50,7 @@ app.get('/', async (req, res, next) => {
 
       return res.render('index', { data: encodedData });
     })
-    .catch(err =>
-        // eslint-disable-line
+    .catch(err => 
       res.send('oh no!'),
       //  errorHandler(err, req, res);
     );
@@ -64,20 +63,20 @@ app.get('/post', (req, res) => {
 });
 
 app.post('/rooms', async (req, res) => {
+  console.info('Data received', req.body);
   const { name = '', stream = '', token = '' } = req.body;
-  await createRoom([name, stream, token]);
-  return res.status(204).json();
+  const roomId = await createRoom([name, stream, token]);
+  return res.status(200).json(roomId);
 });
 
 app.get('/rooms', async (req, res) => {
   const data = await getRooms();
-  console.info(data);
+  console.info('Getting rooms', data);
 
   return res.json(data);
 });
 
 app.post('/post', async (req, res, next) => {
-  // eslint-disable-line
   console.info('posted image');
   // app.locals.currentImage = req.body.avatar;
   const { image = '', roomId = 1 } = req.body;
@@ -86,7 +85,6 @@ app.post('/post', async (req, res, next) => {
 });
 
 app.get('/rooms/:roomId', async (req, res, next) => {
-  // eslint-disable-line
   const data = await getData();
   const { roomId } = data;
   // console.log('APP.LOCALS.CURRENTIMAGE', app.locals.currentImage)

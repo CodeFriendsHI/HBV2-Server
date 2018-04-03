@@ -58,11 +58,12 @@ async function getRooms() {
 
 async function createRoom(data) {
   const client = new Client(connectionString);
-  const queryString = 'INSERT INTO rooms(name, stream, token) VALUES ($1, $2, $3)';
+  const queryString = 'INSERT INTO rooms(name, stream, token) VALUES ($1, $2, $3) RETURNING *';
   await client.connect();
   const result = await client.query(queryString, data);
   await client.end();
-  return result;
+  const { rows } = result;
+  return rows[0].id;
 }
 
 module.exports = {
