@@ -63,7 +63,7 @@ async function createRoom(data) {
   const result = await client.query(queryString, data);
   await client.end();
   const { rows } = result;
-  return rows[0];
+  return rows[0].id;
 }
 
 module.exports = {

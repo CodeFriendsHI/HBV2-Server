@@ -63,6 +63,7 @@ app.get('/post', (req, res) => {
 });
 
 app.post('/rooms', async (req, res) => {
+  console.info('Data received', req.body);
   const { name = '', stream = '', token = '' } = req.body;
   const roomId = await createRoom([name, stream, token]);
   return res.status(200).json(roomId);
@@ -70,7 +71,7 @@ app.post('/rooms', async (req, res) => {
 
 app.get('/rooms', async (req, res) => {
   const data = await getRooms();
-  console.info(data);
+  console.info('Getting rooms', data);
 
   return res.json(data);
 });
