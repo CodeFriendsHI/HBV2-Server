@@ -1,53 +1,56 @@
-var firebase = require('firebase-admin');
-var request = require('request');
+const firebase = require('firebase-admin');
+let request = require('request');
 
-var API_KEY = "..."; // Your Firebase Cloud Messaging Server API key
+const API_KEY = 'AAAA-fzWYgI:APA91bHPOQlbVKTfuExfIYubYMjAt6ubmMRRbZ0h9cPyTqWyDCbuFfaYHfYmELotDyXGby95CFFPdgHokJAhkC64oc8dDi78gqHBkI4LIoLD_gLkmQMa3LqIsXHj7LjQfQ98d4XUn9P0'; // Your Firebase Cloud Messaging Server API key
 
 // Fetch the service account key JSON file contents
-var serviceAccount = require("path/to/serviceAccountKey.json");
+const serviceAccount = require('./KewlKoffee.json');
 
 // Initialize the app with a service account, granting admin privileges
 firebase.initializeApp({
   credential: firebase.credential.cert(serviceAccount),
-  databaseURL: "https://<your database>.firebaseio.com/"
+  databaseURL: 'https://<your database>.firebaseio.com/',
 });
-ref = firebase.database().ref();
+const ref = firebase.database().ref();
 
 function listenForNotificationRequests() {
-  var requests = ref.child('notificationRequests');
-  requests.on('child_added', function(requestSnapshot) {
-    var request = requestSnapshot.val();
-    sendNotificationToUser(
+  const requests = ref.child('notificationRequests');
+  requests.on('child_added', function (requestSnapshot) { // eslint-disable-line
+    request = requestSnapshot.val();
+    sendNotificationToUser( // eslint-disable-line
       request.username,
       request.message,
-      function() {
-        requestSnapshot.ref.remove();
-      }
+      function () { // eslint-disable-line
+        requestSnapshot.ref.remove(); // eslint-disable-line
+      },
     );
-  }, function(error) {
+  }, function(error) { // eslint-disable-line
     console.error(error);
   });
-};
+}
 
-function sendNotificationToUser(username, message, onSuccess) {
+function sendNotificationToUser(label, message, topic, onSuccess) {
   request({
     url: 'https://fcm.googleapis.com/fcm/send',
     method: 'POST',
     headers: {
-      'Content-Type' :' application/json',
-      'Authorization': 'key='+API_KEY
+      'Content-Type': ' application/json',
+      Authorization: `key=${API_KEY}`,
     },
     body: JSON.stringify({
       notification: {
-        title: message
+        label,
+        title: message,
       },
-      to : '/topics/user_'+username
-    })
-  }, function(error, response, body) {
-    if (error) { console.error(error); }
+      to: `/topics/${topic}`,
+    }),
+  }, function(error, response, body) { // eslint-disable-line
+    if (error) {
+      console.error(error);
+    } // eslint-disable-line
     else if (response.statusCode >= 400) {
-      console.error('HTTP Error: '+response.statusCode+' - '+response.statusMessage);
-    }
+      console.error('HTTP Error: '+response.statusCode+' - '+response.statusMessage); // eslint-disable-line
+    } // eslint-disable-line
     else {
       onSuccess();
     }
