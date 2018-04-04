@@ -9,7 +9,7 @@ const serviceAccount = require('./KewlKoffee.json');
 // Initialize the app with a service account, granting admin privileges
 firebase.initializeApp({
   credential: firebase.credential.cert(serviceAccount),
-  databaseURL: 'https://<your database>.firebaseio.com/',
+  databaseURL: 'https://kewlkoffee.firebaseio.com/',
 });
 const ref = firebase.database().ref();
 
