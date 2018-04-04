@@ -20,6 +20,7 @@ function listenForNotificationRequests() {
     sendNotificationToUser( // eslint-disable-line
       request.username,
       request.message,
+      request.topic,
       function () { // eslint-disable-line
         requestSnapshot.ref.remove(); // eslint-disable-line
       },
