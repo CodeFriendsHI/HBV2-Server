@@ -2,66 +2,110 @@ const { Client } = require('pg');
 
 const connectionString = process.env.DATABASE_URL;
 
-async function insertIntoDb(data) {
-  const values = Object.values(data);
 
-  const client = new Client({ connectionString });
-  const text = 'INSERT INTO images(image, roomId) VALUES($1, $2);';
+
+/**
+ * Execute an SQL query
+ *
+ * @param {string} sqlQuery - SQL query to execute
+ * @param {array} [values=[]] - Values for parameterized query
+ *
+ * @returns {Promise} Promise representing the result of the SQL query
+ */
+async function query(sqlQuery, values = []) {
+  const client = new Client({
+    connectionString,
+  });
   await client.connect();
-  await client.query(text, values);
-  await client.end();
+
+  let result;
+
+  try {
+    result = await client.query(sqlQuery, values);
+  } catch (err) {
+    console.error('Error executing query', err);
+    throw err;
+  } finally {
+    await client.end();
+  }
+  return result;
 }
 
+/**
+ * Insert Image to database
+ * 
+ * @param {Object} data 
+ */
+async function insertIntoDb(data) {
+  const values = Object.values(data);
+  const qs = 'INSERT INTO images(image, roomId) VALUES($1, $2);';
+  await query(qs, values);
+}
+
+
+/**
+ * Returns all images
+ * 
+ * 
+ * @returns {Promise} Promise representing array of images
+ * 
+ */
+
 async function getData() {
-  const client = new Client({ connectionString });
-  await client.connect();
-  const data = await client.query('SELECT * FROM images;');
-  await client.end();
+  const qs = 'SELECT * FROM images;'
+  const data = await query(qs,[]);
   return data.rows;
 }
 
-async function getNewest(id) {
-  const client = new Client({ connectionString });
-  // const queryString =
-  //   'SELECT image FROM images WHERE id = (SELECT max(id) FROM images) AND WHERE roomId = $1';
+/**
+ * get the newest image
+ * 
+ * @returns {Promise} Promise representing the newest image
+ * 
+ */
+async function getNewest() {
   const queryString = 'SELECT image FROM images WHERE id = (SELECT max(id) FROM images)';
-  const values = [id];
-  await client.connect();
-  const data = await client.query(queryString);
-  await client.end();
+  const data = await query(queryString);
   const { rows } = data;
-  // console.info(rows);
   return rows;
 }
 
+/**
+ * Delete old images
+ * 
+ * 
+ * @returns {Promise}
+ */
 async function cleanOld() {
-  const client = new Client({ connectionString });
   const queryString =
     'DELETE FROM images WHERE id NOT IN (SELECT id FROM images ORDER BY id DESC LIMIT 10)';
-  await client.connect();
-  const data = await client.query(queryString);
-  await client.end();
+  const data = await query(queryString);
   const { rows } = data;
-  // console.info(rows);
   return rows;
 }
 
+/**
+ * get all rooms
+ * 
+ * @returns {Promise} representing array of rooms
+ */
 async function getRooms() {
-  const client = new Client(connectionString);
   const queryString = 'SELECT * FROM rooms';
-  await client.connect();
-  const data = await client.query(queryString);
-  await client.end();
+  const data = await query(queryString);
   const { rows } = data;
   return rows;
 }
 
+/**
+ * create a new room
+ * 
+ * @param {array} data
+ * 
+ * @returns {Promise} representing the new room 
+ */
 async function createRoom(data) {
-  const client = new Client(connectionString);
   const queryString = 'INSERT INTO rooms(name, stream, token) VALUES ($1, $2, $3) RETURNING *';
-  await client.connect();
-  const result = await client.query(queryString, data);
-  await client.end();
+  const result = await query(queryString, data);
   const { rows } = result;
   return rows[0].id;
 }

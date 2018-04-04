@@ -4,7 +4,12 @@ const path = require('path');
 const bodyParser = require('body-parser');
 
 const {
-  insertIntoDb, getData, getNewest, cleanOld, getRooms, createRoom,
+  insertIntoDb,
+  getData,
+  getNewest,
+  cleanOld,
+  getRooms,
+  createRoom,
 } = require('./db');
 
 const app = express();
@@ -26,8 +31,13 @@ const directory = './uploads';
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-app.use(bodyParser.json({ limit: '50mb' }));
-app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
+app.use(bodyParser.json({
+  limit: '50mb'
+}));
+app.use(bodyParser.urlencoded({
+  limit: '50mb',
+  extended: true
+}));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'uploads')));
 
@@ -46,13 +56,12 @@ app.get('/', async (req, res, next) => {
     .then((data) => {
       console.info(data);
       const encodedData = data.map(i => i.toString('base64'));
-      // res.send(encodedData) // sendFILE hér skal senda gögnin
-
-      return res.render('index', { data: encodedData });
+      return res.render('index', {
+        data: encodedData
+      });
     })
-    .catch(err => 
+    .catch(err =>
       res.send('oh no!'),
-      //  errorHandler(err, req, res);
     );
 });
 
@@ -64,7 +73,9 @@ app.get('/post', (req, res) => {
 
 app.post('/rooms', async (req, res) => {
   console.info('Data received', req.body);
-  const { name = '', stream = '', token = '' } = req.body;
+  const {
+    name = '', stream = '', token = ''
+  } = req.body;
   const roomId = await createRoom([name, stream, token]);
   return res.status(200).json(roomId);
 });
@@ -78,24 +89,34 @@ app.get('/rooms', async (req, res) => {
 
 app.post('/post', async (req, res, next) => {
   console.info('posted image');
-  // app.locals.currentImage = req.body.avatar;
-  const { image = '', roomId = 1 } = req.body;
-  await insertIntoDb({ image, roomId });
+  const {
+    image = '', roomId = 1
+  } = req.body;
+  await insertIntoDb({
+    image,
+    roomId
+  });
   return res.status(201).json(roomId);
 });
 
 app.get('/rooms/:roomId', async (req, res, next) => {
   const data = await getData();
-  const { roomId } = data;
-  // console.log('APP.LOCALS.CURRENTIMAGE', app.locals.currentImage)
-
-  res.render('images', { data });
+  const {
+    roomId
+  } = data;
+  res.render('images', {
+    data
+  });
 });
 
 app.get('/streams/:id', async (req, res) => {
-  const { id } = req.params;
+  const {
+    id
+  } = req.params;
   const data = await getNewest();
-  const { image } = data[0];
+  const {
+    image
+  } = data[0];
   const result = await cloud.uploader.upload(`data:image/gif;base64,${image}`);
 
   return res.send(result.url);
