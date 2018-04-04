@@ -1,5 +1,5 @@
 const firebase = require('firebase-admin');
-let request = require('request');
+const request = require('request');
 
 const API_KEY = 'AAAA-fzWYgI:APA91bHPOQlbVKTfuExfIYubYMjAt6ubmMRRbZ0h9cPyTqWyDCbuFfaYHfYmELotDyXGby95CFFPdgHokJAhkC64oc8dDi78gqHBkI4LIoLD_gLkmQMa3LqIsXHj7LjQfQ98d4XUn9P0'; // Your Firebase Cloud Messaging Server API key
 
@@ -16,11 +16,11 @@ const ref = firebase.database().ref();
 function listenForNotificationRequests() {
   const requests = ref.child('notificationRequests');
   requests.on('child_added', function (requestSnapshot) { // eslint-disable-line
-    request = requestSnapshot.val();
+    const request12 = requestSnapshot.val();
     sendNotificationToUser( // eslint-disable-line
-      request.username,
-      request.message,
-      request.topic,
+      request12.username,
+      request12.message,
+      request12.topic,
       function () { // eslint-disable-line
         requestSnapshot.ref.remove(); // eslint-disable-line
       },
@@ -32,7 +32,7 @@ function listenForNotificationRequests() {
 
 function sendNotificationToUser(label, message, topic, onSuccess) {
   console.log("sending");
-  request({
+  request.post({
     url: 'https://fcm.googleapis.com/fcm/send',
     method: 'POST',
     headers: {
