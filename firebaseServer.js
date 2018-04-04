@@ -31,6 +31,7 @@ function listenForNotificationRequests() {
 }
 
 function sendNotificationToUser(label, message, topic, onSuccess) {
+  console.log("sending");
   request({
     url: 'https://fcm.googleapis.com/fcm/send',
     method: 'POST',
@@ -40,8 +41,8 @@ function sendNotificationToUser(label, message, topic, onSuccess) {
     },
     body: JSON.stringify({
       notification: {
-        label,
-        title: message,
+        body: message,
+        title: label,
       },
       to: `/topics/${topic}`,
     }),
@@ -53,6 +54,7 @@ function sendNotificationToUser(label, message, topic, onSuccess) {
       console.error('HTTP Error: '+response.statusCode+' - '+response.statusMessage); // eslint-disable-line
     } // eslint-disable-line
     else {
+      console.log("tókst");
       onSuccess();
     }
   });
