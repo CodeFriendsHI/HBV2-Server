@@ -10,6 +10,7 @@ const {
   cleanOld,
   getRooms,
   createRoom,
+  deleteRoom,
 } = require('./db');
 
 const app = express();
@@ -97,6 +98,15 @@ app.post('/post', async (req, res, next) => {
     roomId
   });
   return res.status(201).json(roomId);
+});
+
+app.delete('/rooms/:id', async (req, res) => {
+  const { id } = req.params;
+
+  const success = await deleteRoom(id);
+  const status = success ? 201 : 401;
+
+  return res.status(status).json(success);
 });
 
 app.get('/rooms/:roomId', async (req, res, next) => {

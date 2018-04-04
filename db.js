@@ -110,6 +110,21 @@ async function createRoom(data) {
   return rows[0].id;
 }
 
+/**
+ * Deleta a room
+ * 
+ * @param {number} id
+ * 
+ * @returns {Boolean} depending on success
+ */
+async function deleteRoom(id) {
+  const queryString = 'DELETE FROM rooms WHERE id = $1';
+  const result = await query(queryString, [id]);
+
+  const success = result.rowCount === 1;
+  return success;
+}
+
 module.exports = {
   insertIntoDb,
   getData,
@@ -117,4 +132,5 @@ module.exports = {
   cleanOld,
   getRooms,
   createRoom,
+  deleteRoom,
 };
