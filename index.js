@@ -128,13 +128,9 @@ app.get('/streams/', async (req, res) => {
 });
 
 app.get('/streams/:id', async (req, res) => {
-  const {
-    id
-  } = req.params;
-  const data = await getNewest();
-  const {
-    image
-  } = data[0];
+  const { id } = req.params;
+  const data = await getNewest(id);
+  const { image } = data[0];
   const result = await cloud.uploader.upload(`data:image/gif;base64,${image}`);
 
   return res.send(result.url);
