@@ -3,7 +3,6 @@ const { Client } = require('pg');
 const connectionString = process.env.DATABASE_URL;
 
 
-
 /**
  * Execute an SQL query
  *
@@ -33,8 +32,8 @@ async function query(sqlQuery, values = []) {
 
 /**
  * Insert Image to database
- * 
- * @param {Object} data 
+ *
+ * @param {Object} data
  */
 async function insertIntoDb(data) {
   const values = Object.values(data);
@@ -45,23 +44,23 @@ async function insertIntoDb(data) {
 
 /**
  * Returns all images
- * 
- * 
+ *
+ *
  * @returns {Promise} Promise representing array of images
- * 
+ *
  */
 
 async function getData() {
-  const qs = 'SELECT * FROM images;'
-  const data = await query(qs,[]);
+  const qs = 'SELECT * FROM images;';
+  const data = await query(qs, []);
   return data.rows;
 }
 
 /**
  * get the newest image
- * 
+ *
  * @returns {Promise} Promise representing the newest image
- * 
+ *
  */
 async function getNewest(roomId) {
   const queryString = 'SELECT image FROM images WHERE id = (SELECT max(id) FROM images) AND roomId = $1';
@@ -72,8 +71,8 @@ async function getNewest(roomId) {
 
 /**
  * Delete old images
- * 
- * 
+ *
+ *
  * @returns {Promise}
  */
 async function cleanOld() {
@@ -86,7 +85,7 @@ async function cleanOld() {
 
 /**
  * get all rooms
- * 
+ *
  * @returns {Promise} representing array of rooms
  */
 async function getRooms() {
@@ -98,10 +97,10 @@ async function getRooms() {
 
 /**
  * create a new room
- * 
+ *
  * @param {array} data
- * 
- * @returns {Promise} representing the new room 
+ *
+ * @returns {Promise} representing the new room
  */
 async function createRoom(data) {
   const queryString = 'INSERT INTO rooms(name, stream, token) VALUES ($1, $2, $3) RETURNING *';
@@ -112,9 +111,9 @@ async function createRoom(data) {
 
 /**
  * Deleta a room
- * 
+ *
  * @param {number} id
- * 
+ *
  * @returns {Boolean} depending on success
  */
 async function deleteRoom(id) {
@@ -129,7 +128,7 @@ async function deleteRoom(id) {
  * Get active streams
  */
 async function getStreams() {
-  const queryString = 'SELECT * FROM images';
+  const queryString = 'SELECT image, roomId FROM images';
   const data = await query(queryString);
   const { rows } = data;
   return rows;

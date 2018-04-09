@@ -34,11 +34,11 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 app.use(bodyParser.json({
-  limit: '50mb'
+  limit: '50mb',
 }));
 app.use(bodyParser.urlencoded({
   limit: '50mb',
-  extended: true
+  extended: true,
 }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static(path.join(__dirname, 'uploads')));
@@ -59,7 +59,7 @@ app.get('/', async (req, res, next) => {
       console.info(data);
       const encodedData = data.map(i => i.toString('base64'));
       return res.render('index', {
-        data: encodedData
+        data: encodedData,
       });
     })
     .catch(err =>
@@ -76,7 +76,7 @@ app.get('/post', (req, res) => {
 app.post('/rooms', async (req, res) => {
   console.info('Data received', req.body);
   const {
-    name = '', stream = '', token = ''
+    name = '', stream = '', token = '',
   } = req.body;
   const roomId = await createRoom([name, stream, token]);
   return res.status(200).json(roomId);
@@ -92,11 +92,11 @@ app.get('/rooms', async (req, res) => {
 app.post('/post', async (req, res, next) => {
   console.info('posted image');
   const {
-    image = '', roomId = 1
+    image = '', roomId = 1,
   } = req.body;
   await insertIntoDb({
     image,
-    roomId
+    roomId,
   });
   return res.status(201).json(roomId);
 });
@@ -113,10 +113,10 @@ app.delete('/rooms/:id', async (req, res) => {
 app.get('/rooms/:roomId', async (req, res, next) => {
   const data = await getData();
   const {
-    roomId
+    roomId,
   } = data;
   res.render('images', {
-    data
+    data,
   });
 });
 
@@ -130,10 +130,13 @@ app.get('/streams/', async (req, res) => {
 app.get('/streams/:id', async (req, res) => {
   const { id } = req.params;
   const data = await getNewest(id);
-  const { image } = data[0];
-  const result = await cloud.uploader.upload(`data:image/gif;base64,${image}`);
-
-  return res.send(result.url);
+  console.info(data);
+  if (data.length > 0) {
+    const { image } = data[0];
+    const result = await cloud.uploader.upload(`data:image/gif;base64,${image}`);
+    return res.status.send(result.url);
+  }
+  return res.status(404).json({ error: 'image not found' });
 });
 
 const hostname = '127.0.0.1';
