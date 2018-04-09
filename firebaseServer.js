@@ -1,7 +1,8 @@
+require('dotenv').config();
 const firebase = require('firebase-admin');
 let request = require('request');
 
-const API_KEY = 'AAAA-fzWYgI:APA91bHPOQlbVKTfuExfIYubYMjAt6ubmMRRbZ0h9cPyTqWyDCbuFfaYHfYmELotDyXGby95CFFPdgHokJAhkC64oc8dDi78gqHBkI4LIoLD_gLkmQMa3LqIsXHj7LjQfQ98d4XUn9P0'; // Your Firebase Cloud Messaging Server API key
+const API_KEY = process.env.API_KEY; // Your Firebase Cloud Messaging Server API key
 
 // Fetch the service account key JSON file contents
 const serviceAccount = require('./KewlKoffee.json');
