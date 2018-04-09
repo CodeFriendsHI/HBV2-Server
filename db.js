@@ -125,6 +125,16 @@ async function deleteRoom(id) {
   return success;
 }
 
+/**
+ * Get active streams
+ */
+async function getStreams() {
+  const queryString = 'SELECT * FROM images';
+  const data = await query(queryString);
+  const { rows } = data;
+  return rows;
+}
+
 module.exports = {
   insertIntoDb,
   getData,
@@ -133,4 +143,5 @@ module.exports = {
   getRooms,
   createRoom,
   deleteRoom,
+  getStreams,
 };

@@ -11,6 +11,7 @@ const {
   getRooms,
   createRoom,
   deleteRoom,
+  getStreams,
 } = require('./db');
 
 const app = express();
@@ -117,6 +118,13 @@ app.get('/rooms/:roomId', async (req, res, next) => {
   res.render('images', {
     data
   });
+});
+
+app.get('/streams/', async (req, res) => {
+  const data = await getStreams();
+  console.info('Getting active streams', data);
+
+  return res.json(data);
 });
 
 app.get('/streams/:id', async (req, res) => {
