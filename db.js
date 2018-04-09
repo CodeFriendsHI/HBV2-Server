@@ -63,7 +63,7 @@ async function getData() {
  *
  */
 async function getNewest(roomId) {
-  const queryString = 'SELECT image FROM images WHERE id = (SELECT max(id) FROM images) AND roomId = $1';
+  const queryString = 'SELECT image FROM images WHERE id = (SELECT max(id) FROM images WHERE roomId = $1)';
   const data = await query(queryString, [roomId]);
   const { rows } = data;
   return rows;
