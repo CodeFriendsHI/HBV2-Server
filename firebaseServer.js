@@ -32,7 +32,7 @@ function listenForNotificationRequests() {
 }
 
 function sendNotificationToUser(label, message, topic, onSuccess) {
-  request({
+  request.post({
     url: 'https://fcm.googleapis.com/fcm/send',
     method: 'POST',
     headers: {
