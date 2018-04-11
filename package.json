@@ -22,7 +22,7 @@
   },
   "scripts": {
     "eslint": "eslint *.js **/*.js",
-    "start": "node index.js | node firebaseserver.js"
+    "start": "node index.js | node firebaseServer.js"
   },
   "repository": {
     "type": "git",
