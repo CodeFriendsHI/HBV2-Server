@@ -17,11 +17,11 @@ const ref = firebase.database().ref();
 function listenForNotificationRequests() {
   const requests = ref.child('notificationRequests');
   requests.on('child_added', function (requestSnapshot) { // eslint-disable-line
-    request = requestSnapshot.val();
+    const requesting = requestSnapshot.val();
     sendNotificationToUser( // eslint-disable-line
-      request.username,
-      request.message,
-      request.topic,
+      requesting.username,
+      requesting.message,
+      requesting.topic,
       function () { // eslint-disable-line
         requestSnapshot.ref.remove(); // eslint-disable-line
       },
