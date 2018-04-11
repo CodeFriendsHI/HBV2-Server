@@ -1,6 +1,6 @@
 require('dotenv').config();
 const firebase = require('firebase-admin');
-let request = require('request');
+const request = require('request');
 
 const { API_KEY } = process.env; // Your Firebase Cloud Messaging Server API key
 
