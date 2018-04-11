@@ -134,7 +134,7 @@ app.get('/streams/:id', async (req, res) => {
   if (data.length > 0) {
     const { image } = data[0];
     const result = await cloud.uploader.upload(`data:image/gif;base64,${image}`);
-    return res.status.send(result.url);
+    return res.send(result.url);
   }
   return res.status(404).json({ error: 'image not found' });
 });
